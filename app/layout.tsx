@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AgentFirewall",
+  title: "AgentFirewall — Runtime guardrails for AI agents",
   description:
-    "Runtime policy enforcement for AI agents using TrueFoundry MCP Gateway.",
+    "AgentFirewall inspects every agent tool call before execution — blocking unauthorized actions, rewriting unsafe promises, and routing safe actions through the TrueFoundry MCP Gateway.",
 };
 
 export default function RootLayout({
@@ -14,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen antialiased">{children}</body>
+      <body className="min-h-screen text-slate-900 antialiased">
+        {children}
+      </body>
     </html>
   );
 }

@@ -10,6 +10,7 @@ import GatewayPanel from "@/components/GatewayPanel";
 import AgentResponse from "@/components/AgentResponse";
 import AuditLog from "@/components/AuditLog";
 import ReplaySuite from "@/components/ReplaySuite";
+import VerdictHero from "@/components/VerdictHero";
 import type { ReplayResult, ScenarioResult } from "@/lib/types";
 
 function PipelineArrow() {
@@ -79,6 +80,8 @@ export default function Page() {
             {error}
           </div>
         ) : null}
+
+        <VerdictHero result={result} />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] xl:items-stretch xl:gap-2">
           <CustomerChat result={result} />

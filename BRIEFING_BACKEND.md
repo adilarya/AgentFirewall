@@ -1,6 +1,6 @@
 # AgentFirewall — Backend / Policy Brief (for Eshwar's Claude)
 
-> **Read this first.** The earlier [BRIEFING.md](BRIEFING.md) describes a Python/FastAPI backend split. **That plan is superseded.** We're shipping a single Next.js + TypeScript app — no Python, no separate process. The policy + MCP integration lives in `lib/policy.ts` and `lib/mcp-client.ts` inside the same Next.js project. Use this file as the current source of truth.
+> **Architecture:** Single Next.js + TypeScript app. The policy + MCP integration lives in `lib/policy.ts` and `lib/mcp-client.ts` inside the Next.js project — no Python, no separate process.
 
 ---
 

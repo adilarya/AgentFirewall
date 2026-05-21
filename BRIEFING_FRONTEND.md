@@ -1,6 +1,6 @@
 # AgentFirewall — Frontend / UI Brief (for Adil's Claude)
 
-> **Read this first.** The earlier [BRIEFING.md](BRIEFING.md) describes a Python/FastAPI backend with the Next.js frontend calling `http://localhost:8000`. **That plan is superseded.** We're shipping a single Next.js + TypeScript app — the firewall logic lives in `lib/policy.ts` and `lib/mcp-client.ts` inside this same project, called by `app/api/**` routes. Use this file as the current source of truth.
+> **Architecture:** Single Next.js + TypeScript app. The firewall logic lives in `lib/policy.ts` and `lib/mcp-client.ts` in this same project, called by `app/api/**` routes — no separate backend process.
 
 ---
 
@@ -91,8 +91,8 @@ Ordered for max demo impact per minute. Stopping points: after 3 = solid demo, a
 | # | Step | Status |
 |---|------|--------|
 | 1 | **Pipeline reflow** — 4-col horizontal flow with chevrons; AgentResponse split below | ✅ done |
-| 2 | **Verdict hero strip** — big colored banner above the pipeline showing current decision | ⏳ next |
-| 3 | **Rewrite diff view** — in `FirewallDecisionPanel`, render original vs `rewrittenArgs.body` side-by-side with strike-through on dangerous text | |
+| 2 | **Verdict hero strip** — big colored banner above the pipeline showing current decision | ✅ done |
+| 3 | **Rewrite diff view** — in `FirewallDecisionPanel`, render original vs `rewrittenArgs.body` side-by-side with strike-through on dangerous text | ⏳ next |
 | 4 | **ScenarioControls polish** — group buttons by expected verdict, show `expected: allow` chip per button | |
 | 5 | **Replay summary header** — `4/5 passing` headline above the replay table | |
 | 6 | **Audit log polish** — relative timestamps (`+12ms`), color-coded event tags, collapsible metadata | |

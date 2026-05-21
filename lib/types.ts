@@ -66,6 +66,19 @@ export interface ScenarioResult {
   auditLog: AuditEvent[];
 }
 
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatResponse {
+  agentText: string;
+  toolCall: ToolCall | null;
+  firewallDecision: FirewallDecision | null;
+  gatewayResult: GatewayResult | null;
+  auditLog: AuditEvent[];
+}
+
 export interface ReplayResult {
   scenarioId: string;
   scenarioName: string;

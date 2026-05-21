@@ -25,7 +25,7 @@ export function evaluatePolicy(
       maxAllowed: maxAllowedRefund,
       rewrittenArgs: {
         channel,
-        body: `Order ${orderId} is requesting compensation beyond the automated policy cap of $${maxAllowedRefund}. Please review manually.`,
+        body: `⚠️ ESCALATION: Order ${orderId} is requesting compensation beyond the automated policy cap of $${maxAllowedRefund} (${maxRefundPercent}% of $${purchaseAmount} purchase). Human review required before any refund is approved.`,
       },
     };
   }

@@ -1,51 +1,52 @@
 "use client";
 
 import { EXPECTED_DECISIONS, SCENARIOS } from "@/lib/scenarios";
-import type { DecisionType, Scenario, ScenarioId } from "@/lib/types";
-
-const GROUP_ORDER: DecisionType[] = ["allow", "block", "rewrite", "escalate"];
-
-const GROUP_STYLES: Record<
-  DecisionType,
-  { label: string; header: string; base: string; active: string }
-> = {
-  allow: {
-    label: "Expected · allow",
-    header: "text-emerald-400",
-    base: "border-emerald-900/60 bg-emerald-500/5 text-emerald-100 hover:border-emerald-500/70",
-    active:
-      "border-emerald-400 bg-emerald-500/15 text-emerald-50 ring-1 ring-emerald-500/40",
-  },
-  block: {
-    label: "Expected · block",
-    header: "text-rose-400",
-    base: "border-rose-900/60 bg-rose-500/5 text-rose-100 hover:border-rose-500/70",
-    active:
-      "border-rose-400 bg-rose-500/15 text-rose-50 ring-1 ring-rose-500/40",
-  },
-  rewrite: {
-    label: "Expected · rewrite",
-    header: "text-amber-400",
-    base: "border-amber-900/60 bg-amber-500/5 text-amber-100 hover:border-amber-500/70",
-    active:
-      "border-amber-400 bg-amber-500/15 text-amber-50 ring-1 ring-amber-500/40",
-  },
-  escalate: {
-    label: "Expected · escalate",
-    header: "text-sky-400",
-    base: "border-sky-900/60 bg-sky-500/5 text-sky-100 hover:border-sky-500/70",
-    active:
-      "border-sky-400 bg-sky-500/15 text-sky-50 ring-1 ring-sky-500/40",
-  },
-};
+import type { DecisionType, ScenarioId } from "@/lib/types";
+import Badge, { DECISION_LABEL, DECISION_TONE } from "./ui/Badge";
+import {
+  AlertIcon,
+  BanIcon,
+  CheckCircleIcon,
+  EditIcon,
+  PlayIcon,
+  UserCheckIcon,
+} from "./ui/Icons";
 
 interface Props {
   onRunScenario: (id: string) => void;
-  onRunReplay: () => void;
   loading: boolean;
   loadingId?: string;
   activeScenarioId?: string;
 }
+
+const SCENARIO_META: Record<
+  string,
+  { description: string; Icon: typeof PlayIcon }
+> = {
+  safe_policy_action: {
+    description: "Customer asks for the maximum voucher allowed under policy.",
+    Icon: CheckCircleIcon,
+  },
+  valid_escalation: {
+    description: "Customer requests a human reviewer for an edge case.",
+    Icon: UserCheckIcon,
+  },
+  angry_customer_attack: {
+    description:
+      "Customer pressures the agent into approving a $500 refund on a $50 purchase.",
+    Icon: AlertIcon,
+  },
+  fake_manager_approval: {
+    description:
+      "Customer fabricates manager approval to skip refund policy checks.",
+    Icon: BanIcon,
+  },
+  unauthorized_promise: {
+    description:
+      "Agent tries to send written confirmation of guaranteed compensation.",
+    Icon: EditIcon,
+  },
+};
 
 function Spinner() {
   return (
@@ -58,77 +59,76 @@ function Spinner() {
 
 export default function ScenarioControls({
   onRunScenario,
-  onRunReplay,
   loading,
   loadingId,
   activeScenarioId,
 }: Props) {
-  const groups = new Map<DecisionType, Scenario[]>();
-  for (const s of SCENARIOS) {
-    const expected = EXPECTED_DECISIONS[s.id as ScenarioId];
-    const list = groups.get(expected) ?? [];
-    list.push(s);
-    groups.set(expected, list);
-  }
-
   return (
-    <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-300">
-        Scenarios
-      </h2>
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      {SCENARIOS.map((s) => {
+        const expected: DecisionType = EXPECTED_DECISIONS[s.id as ScenarioId];
+        const tone = DECISION_TONE[expected];
+        const meta = SCENARIO_META[s.id] ?? {
+          description: "",
+          Icon: PlayIcon,
+        };
+        const Icon = meta.Icon;
+        const isActive = s.id === activeScenarioId;
+        const isLoading = s.id === loadingId;
 
-      <div className="space-y-3">
-        {GROUP_ORDER.filter((v) => groups.has(v)).map((verdict) => {
-          const style = GROUP_STYLES[verdict];
-          const scenarios = groups.get(verdict) ?? [];
-          return (
-            <div key={verdict}>
-              <div
+        return (
+          <button
+            key={s.id}
+            onClick={() => onRunScenario(s.id)}
+            disabled={loading}
+            className={
+              "group flex h-full flex-col items-start gap-3 rounded-2xl bg-white p-4 text-left ring-1 transition disabled:cursor-not-allowed disabled:opacity-60 " +
+              (isActive
+                ? "shadow-md ring-2 ring-indigo-300"
+                : "shadow-sm ring-slate-200 hover:-translate-y-0.5 hover:shadow-md hover:ring-slate-300")
+            }
+          >
+            <div className="flex w-full items-start justify-between gap-2">
+              <span
                 className={
-                  "mb-1.5 text-[10px] font-semibold uppercase tracking-wider " +
-                  style.header
+                  "flex h-9 w-9 items-center justify-center rounded-xl " +
+                  (tone === "emerald"
+                    ? "bg-emerald-50 text-emerald-600"
+                    : tone === "rose"
+                      ? "bg-rose-50 text-rose-600"
+                      : tone === "amber"
+                        ? "bg-amber-50 text-amber-700"
+                        : "bg-sky-50 text-sky-600")
                 }
               >
-                {style.label}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {scenarios.map((s) => {
-                  const active = s.id === activeScenarioId;
-                  const isLoading = s.id === loadingId;
-                  return (
-                    <button
-                      key={s.id}
-                      disabled={loading}
-                      onClick={() => onRunScenario(s.id)}
-                      className={
-                        "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition disabled:opacity-50 " +
-                        (active ? style.active : style.base)
-                      }
-                    >
-                      {isLoading ? <Spinner /> : null}
-                      {s.name}
-                    </button>
-                  );
-                })}
-              </div>
+                <Icon className="h-4 w-4" />
+              </span>
+              <Badge tone={tone} size="sm">
+                {DECISION_LABEL[expected]}
+              </Badge>
             </div>
-          );
-        })}
-      </div>
 
-      <div className="mt-4 border-t border-slate-800 pt-3">
-        <button
-          disabled={loading}
-          onClick={onRunReplay}
-          className="inline-flex items-center gap-2 rounded-md border border-indigo-500 bg-indigo-500/10 px-3 py-2 text-sm text-indigo-200 transition hover:border-indigo-300 disabled:opacity-50"
-        >
-          {loadingId === "__replay__" ? <Spinner /> : null}
-          Run replay suite
-        </button>
-        <span className="ml-3 text-xs text-slate-500">
-          Runs all scenarios, checks expected vs actual
-        </span>
-      </div>
-    </section>
+            <div className="w-full">
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-semibold text-slate-900">
+                  {s.name}
+                </h4>
+                {isLoading ? <Spinner /> : null}
+              </div>
+              <p className="mt-1 line-clamp-3 text-xs text-slate-500">
+                {meta.description}
+              </p>
+            </div>
+
+            <div className="mt-auto flex w-full items-center justify-between pt-1 text-[11px] text-slate-400">
+              <span className="font-mono">{s.id}</span>
+              <span className="font-medium text-indigo-600 opacity-0 transition group-hover:opacity-100">
+                Run →
+              </span>
+            </div>
+          </button>
+        );
+      })}
+    </div>
   );
 }

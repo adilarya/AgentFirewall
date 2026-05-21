@@ -1,6 +1,7 @@
 import type { ScenarioResult } from "@/lib/types";
-import Card from "./internal/Card";
-import EmptyState from "./internal/EmptyState";
+import Badge from "./ui/Badge";
+import Card from "./ui/Card";
+import { CheckCircleIcon, CloudIcon, XCircleIcon } from "./ui/Icons";
 
 export default function GatewayPanel({
   result,
@@ -8,58 +9,84 @@ export default function GatewayPanel({
   result?: ScenarioResult;
 }) {
   return (
-    <Card title="MCP Gateway" subtitle="TrueFoundry routing (simulated)" step={4}>
+    <Card
+      eyebrow="Step 4"
+      title="TrueFoundry MCP Gateway"
+      subtitle="Simulated routing"
+      icon={<CloudIcon className="h-5 w-5" />}
+      accent="indigo"
+    >
       {!result ? (
-        <EmptyState glyph="↗">
-          Gateway routing status will appear here.
-        </EmptyState>
+        <div className="flex h-full flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50/60 py-8 text-center">
+          <p className="text-sm text-slate-500">
+            Gateway routing status will appear here.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-2 text-sm">
-          <div className="flex gap-4">
-            <span className="text-slate-500">executed</span>
-            <span
-              className={
-                "font-mono " +
-                (result.gatewayResult.executed
-                  ? "text-emerald-300"
-                  : "text-rose-300")
-              }
-            >
-              {String(result.gatewayResult.executed)}
-            </span>
+        <div className="space-y-3 text-sm">
+          <div className="flex items-center gap-2">
+            {result.gatewayResult.executed ? (
+              <Badge
+                tone="emerald"
+                leadingIcon={<CheckCircleIcon className="h-3.5 w-3.5" />}
+              >
+                Executed via gateway
+              </Badge>
+            ) : (
+              <Badge
+                tone="rose"
+                leadingIcon={<XCircleIcon className="h-3.5 w-3.5" />}
+              >
+                Did not reach MCP
+              </Badge>
+            )}
           </div>
-          {result.gatewayResult.server ? (
-            <div className="flex gap-4">
-              <span className="text-slate-500">server</span>
-              <span className="font-mono text-slate-200">
-                {result.gatewayResult.server}
-              </span>
-            </div>
-          ) : null}
-          {result.gatewayResult.tool ? (
-            <div className="flex gap-4">
-              <span className="text-slate-500">tool</span>
-              <span className="font-mono text-slate-200">
-                {result.gatewayResult.tool}
-              </span>
-            </div>
-          ) : null}
-          <div className="flex gap-4">
-            <span className="text-slate-500">status</span>
-            <span className="font-mono text-slate-200">
-              {result.gatewayResult.status}
-            </span>
+
+          <div className="space-y-2 rounded-xl bg-slate-50 p-3 ring-1 ring-slate-200">
+            {result.gatewayResult.server ? (
+              <Row label="server" value={result.gatewayResult.server} />
+            ) : null}
+            {result.gatewayResult.tool ? (
+              <Row label="tool" value={result.gatewayResult.tool} />
+            ) : null}
+            <Row label="status" value={result.gatewayResult.status} mono />
+            {result.gatewayResult.traceId ? (
+              <Row label="trace id" value={result.gatewayResult.traceId} mono />
+            ) : null}
           </div>
-          {result.gatewayResult.traceId ? (
-            <div className="flex gap-4">
-              <span className="text-slate-500">traceId</span>
-              <span className="font-mono text-slate-200">
-                {result.gatewayResult.traceId}
-              </span>
-            </div>
-          ) : null}
+
+          <p className="text-[11px] text-slate-500">
+            Safe or rewritten actions are routed through the TrueFoundry MCP
+            Gateway. Blocked actions never reach MCP execution.
+          </p>
         </div>
       )}
     </Card>
+  );
+}
+
+function Row({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+        {label}
+      </span>
+      <span
+        className={
+          "truncate text-right text-xs " +
+          (mono ? "font-mono text-slate-800" : "text-slate-900")
+        }
+      >
+        {value}
+      </span>
+    </div>
   );
 }

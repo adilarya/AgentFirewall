@@ -47,12 +47,32 @@ export default function FirewallDecisionPanel({
               </span>
             </div>
           ) : null}
-          {result.firewallDecision.rewrittenArgs ? (
-            <div>
-              <div className="mb-1 text-slate-500">rewrittenArgs</div>
-              <pre className="overflow-x-auto rounded-md bg-slate-950/60 p-3 text-xs text-amber-100">
-                {JSON.stringify(result.firewallDecision.rewrittenArgs, null, 2)}
-              </pre>
+          {result.firewallDecision.decision === "rewrite" &&
+          result.firewallDecision.rewrittenArgs ? (
+            <div className="space-y-2">
+              <div className="text-slate-500">Body rewrite</div>
+              <div className="rounded-md border border-rose-900/60 bg-rose-500/5 p-3">
+                <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-rose-400">
+                  ⚠ Agent attempted
+                </div>
+                <div className="text-xs leading-relaxed text-rose-200 line-through decoration-rose-500/70">
+                  {String(result.toolCall.args.body ?? "")}
+                </div>
+              </div>
+              <div className="text-center font-mono text-xs text-slate-600">
+                ↓ firewall
+              </div>
+              <div className="rounded-md border border-amber-900/60 bg-amber-500/5 p-3">
+                <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+                  ✓ Firewall sent
+                </div>
+                <div className="text-xs leading-relaxed text-amber-100">
+                  {String(
+                    (result.firewallDecision.rewrittenArgs as { body?: unknown })
+                      .body ?? "",
+                  )}
+                </div>
+              </div>
             </div>
           ) : null}
         </div>

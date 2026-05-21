@@ -95,8 +95,8 @@ Ordered for max demo impact per minute. Stopping points: after 3 = solid demo, a
 | 3 | **Rewrite diff view** — in `FirewallDecisionPanel`, render original vs `rewrittenArgs.body` (stacked, strike-through on the dangerous version) | ✅ done |
 | 4 | **ScenarioControls polish** — group buttons by expected verdict with color-tinted clusters, replay button on its own row | ✅ done |
 | 5 | **Replay summary header** — `X/Y passing` headline with colored dot above the replay table | ✅ done |
-| 6 | **Audit log polish** — relative timestamps (`+12ms`), color-coded event tags, collapsible metadata | ⏳ next |
-| 7 | **Loading + empty states** — spinner in active button, friendlier placeholder copy across panels | |
+| 6 | **Audit log polish** — relative timestamps, color-coded event tags by category, collapsible metadata via native `<details>` | ✅ done |
+| 7 | **Loading + empty states** — spinner in active button, friendlier placeholder copy across panels | ⏳ next |
 | 8 | **Header polish** — team names, "DEMO" tag, status dot for `policy v0 · 5 scenarios` | |
 
 Each step lands as a discrete diff for review before moving to the next.

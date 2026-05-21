@@ -14,7 +14,7 @@ export default function FirewallDecisionPanel({
   result?: ScenarioResult;
 }) {
   return (
-    <Card title="Firewall decision" subtitle="Runtime policy enforcement">
+    <Card title="Firewall decision" subtitle="Runtime policy enforcement" step={3} accent>
       {!result ? (
         <p className="text-sm text-slate-500">No decision yet.</p>
       ) : (

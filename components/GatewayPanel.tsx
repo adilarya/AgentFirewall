@@ -7,7 +7,7 @@ export default function GatewayPanel({
   result?: ScenarioResult;
 }) {
   return (
-    <Card title="MCP Gateway" subtitle="TrueFoundry routing (simulated)">
+    <Card title="MCP Gateway" subtitle="TrueFoundry routing (simulated)" step={4}>
       {!result ? (
         <p className="text-sm text-slate-500">No gateway activity yet.</p>
       ) : (

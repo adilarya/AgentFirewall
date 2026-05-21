@@ -7,9 +7,21 @@ import CustomerChat from "@/components/CustomerChat";
 import ToolCallPanel from "@/components/ToolCallPanel";
 import FirewallDecisionPanel from "@/components/FirewallDecisionPanel";
 import GatewayPanel from "@/components/GatewayPanel";
+import AgentResponse from "@/components/AgentResponse";
 import AuditLog from "@/components/AuditLog";
 import ReplaySuite from "@/components/ReplaySuite";
 import type { ReplayResult, ScenarioResult } from "@/lib/types";
+
+function PipelineArrow() {
+  return (
+    <div
+      aria-hidden
+      className="hidden select-none items-center justify-center text-2xl text-slate-600 xl:flex"
+    >
+      →
+    </div>
+  );
+}
 
 export default function Page() {
   const [result, setResult] = useState<ScenarioResult | undefined>();
@@ -68,12 +80,17 @@ export default function Page() {
           </div>
         ) : null}
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] xl:items-stretch xl:gap-2">
           <CustomerChat result={result} />
+          <PipelineArrow />
           <ToolCallPanel result={result} />
+          <PipelineArrow />
           <FirewallDecisionPanel result={result} />
+          <PipelineArrow />
           <GatewayPanel result={result} />
         </div>
+
+        <AgentResponse result={result} />
 
         <AuditLog result={result} />
         <ReplaySuite results={replay} />

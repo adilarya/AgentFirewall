@@ -7,7 +7,7 @@ export default function CustomerChat({
   result?: ScenarioResult;
 }) {
   return (
-    <Card title="Customer chat">
+    <Card title="Customer chat" subtitle="Input to the agent" step={1}>
       {!result ? (
         <p className="text-sm text-slate-500">Run a scenario to see the chat.</p>
       ) : (
@@ -26,14 +26,6 @@ export default function CustomerChat({
             </div>
             <div className="rounded-md bg-slate-800/30 p-3 text-sm text-slate-200">
               {result.agentIntent}
-            </div>
-          </div>
-          <div>
-            <div className="text-xs uppercase tracking-wide text-slate-500">
-              Final agent response
-            </div>
-            <div className="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-100">
-              {result.finalAgentResponse}
             </div>
           </div>
         </div>

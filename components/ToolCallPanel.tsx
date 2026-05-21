@@ -7,7 +7,7 @@ export default function ToolCallPanel({
   result?: ScenarioResult;
 }) {
   return (
-    <Card title="Proposed tool call" subtitle="What the agent wanted to do">
+    <Card title="Proposed tool call" subtitle="What the agent wanted to do" step={2}>
       {!result ? (
         <p className="text-sm text-slate-500">No tool call yet.</p>
       ) : (

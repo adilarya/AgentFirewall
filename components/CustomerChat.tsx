@@ -1,0 +1,43 @@
+import type { ScenarioResult } from "@/lib/types";
+import Card from "./internal/Card";
+
+export default function CustomerChat({
+  result,
+}: {
+  result?: ScenarioResult;
+}) {
+  return (
+    <Card title="Customer chat">
+      {!result ? (
+        <p className="text-sm text-slate-500">Run a scenario to see the chat.</p>
+      ) : (
+        <div className="space-y-3">
+          <div>
+            <div className="text-xs uppercase tracking-wide text-slate-500">
+              Customer
+            </div>
+            <div className="rounded-md bg-slate-800/60 p-3 text-sm text-slate-100">
+              {result.customerMessage}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wide text-slate-500">
+              Agent intent
+            </div>
+            <div className="rounded-md bg-slate-800/30 p-3 text-sm text-slate-200">
+              {result.agentIntent}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wide text-slate-500">
+              Final agent response
+            </div>
+            <div className="rounded-md bg-emerald-500/10 p-3 text-sm text-emerald-100">
+              {result.finalAgentResponse}
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}

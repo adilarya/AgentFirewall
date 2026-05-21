@@ -1,5 +1,6 @@
 import type { DecisionType, ReplayResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 const COLORS: Record<DecisionType, string> = {
   allow: "text-emerald-300",
@@ -48,9 +49,10 @@ export default function ReplaySuite({
   return (
     <Card title="Replay suite" subtitle="Regression check across all scenarios">
       {!results || results.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          Run the replay suite to see results.
-        </p>
+        <EmptyState glyph="▦">
+          Click <span className="font-mono text-slate-400">Run replay suite</span>{" "}
+          to evaluate all scenarios.
+        </EmptyState>
       ) : (
         <>
           <Summary results={results} />

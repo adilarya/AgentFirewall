@@ -1,5 +1,6 @@
 import type { AuditEvent, ScenarioResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 function categoryStyle(message: string): string {
   switch (message) {
@@ -77,7 +78,7 @@ export default function AuditLog({ result }: { result?: ScenarioResult }) {
   if (!result) {
     return (
       <Card title="Audit log" subtitle="Append-only trail">
-        <p className="text-sm text-slate-500">No events yet.</p>
+        <EmptyState glyph="≡">Event timeline will appear here.</EmptyState>
       </Card>
     );
   }

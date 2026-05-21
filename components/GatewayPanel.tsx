@@ -1,5 +1,6 @@
 import type { ScenarioResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 export default function GatewayPanel({
   result,
@@ -9,7 +10,9 @@ export default function GatewayPanel({
   return (
     <Card title="MCP Gateway" subtitle="TrueFoundry routing (simulated)" step={4}>
       {!result ? (
-        <p className="text-sm text-slate-500">No gateway activity yet.</p>
+        <EmptyState glyph="↗">
+          Gateway routing status will appear here.
+        </EmptyState>
       ) : (
         <div className="space-y-2 text-sm">
           <div className="flex gap-4">

@@ -1,5 +1,6 @@
 import type { ScenarioResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 export default function ToolCallPanel({
   result,
@@ -9,7 +10,9 @@ export default function ToolCallPanel({
   return (
     <Card title="Proposed tool call" subtitle="What the agent wanted to do" step={2}>
       {!result ? (
-        <p className="text-sm text-slate-500">No tool call yet.</p>
+        <EmptyState glyph="{ }">
+          The agent&apos;s proposed tool call will appear here.
+        </EmptyState>
       ) : (
         <div className="space-y-2 text-sm">
           <div className="flex gap-4">

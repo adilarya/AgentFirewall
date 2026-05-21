@@ -1,5 +1,6 @@
 import type { ScenarioResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 export default function CustomerChat({
   result,
@@ -9,7 +10,9 @@ export default function CustomerChat({
   return (
     <Card title="Customer chat" subtitle="Input to the agent" step={1}>
       {!result ? (
-        <p className="text-sm text-slate-500">Run a scenario to see the chat.</p>
+        <EmptyState glyph="❝">
+          Customer message and agent intent will appear here.
+        </EmptyState>
       ) : (
         <div className="space-y-3">
           <div>

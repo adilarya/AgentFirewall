@@ -43,13 +43,24 @@ interface Props {
   onRunScenario: (id: string) => void;
   onRunReplay: () => void;
   loading: boolean;
+  loadingId?: string;
   activeScenarioId?: string;
+}
+
+function Spinner() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent"
+    />
+  );
 }
 
 export default function ScenarioControls({
   onRunScenario,
   onRunReplay,
   loading,
+  loadingId,
   activeScenarioId,
 }: Props) {
   const groups = new Map<DecisionType, Scenario[]>();
@@ -83,16 +94,18 @@ export default function ScenarioControls({
               <div className="flex flex-wrap gap-2">
                 {scenarios.map((s) => {
                   const active = s.id === activeScenarioId;
+                  const isLoading = s.id === loadingId;
                   return (
                     <button
                       key={s.id}
                       disabled={loading}
                       onClick={() => onRunScenario(s.id)}
                       className={
-                        "rounded-md border px-3 py-2 text-sm transition disabled:opacity-50 " +
+                        "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition disabled:opacity-50 " +
                         (active ? style.active : style.base)
                       }
                     >
+                      {isLoading ? <Spinner /> : null}
                       {s.name}
                     </button>
                   );
@@ -107,8 +120,9 @@ export default function ScenarioControls({
         <button
           disabled={loading}
           onClick={onRunReplay}
-          className="rounded-md border border-indigo-500 bg-indigo-500/10 px-3 py-2 text-sm text-indigo-200 transition hover:border-indigo-300 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-md border border-indigo-500 bg-indigo-500/10 px-3 py-2 text-sm text-indigo-200 transition hover:border-indigo-300 disabled:opacity-50"
         >
+          {loadingId === "__replay__" ? <Spinner /> : null}
           Run replay suite
         </button>
         <span className="ml-3 text-xs text-slate-500">

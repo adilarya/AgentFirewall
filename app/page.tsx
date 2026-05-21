@@ -27,11 +27,12 @@ function PipelineArrow() {
 export default function Page() {
   const [result, setResult] = useState<ScenarioResult | undefined>();
   const [replay, setReplay] = useState<ReplayResult[] | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
+  const loading = loadingId !== undefined;
 
   async function runScenario(scenarioId: string) {
-    setLoading(true);
+    setLoadingId(scenarioId);
     setError(undefined);
     try {
       const res = await fetch("/api/run-scenario", {
@@ -45,12 +46,12 @@ export default function Page() {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setLoading(false);
+      setLoadingId(undefined);
     }
   }
 
   async function runReplay() {
-    setLoading(true);
+    setLoadingId("__replay__");
     setError(undefined);
     try {
       const res = await fetch("/api/run-replay", { method: "POST" });
@@ -60,7 +61,7 @@ export default function Page() {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
-      setLoading(false);
+      setLoadingId(undefined);
     }
   }
 
@@ -72,6 +73,7 @@ export default function Page() {
           onRunScenario={runScenario}
           onRunReplay={runReplay}
           loading={loading}
+          loadingId={loadingId}
           activeScenarioId={result?.scenarioId}
         />
 

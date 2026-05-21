@@ -96,8 +96,8 @@ Ordered for max demo impact per minute. Stopping points: after 3 = solid demo, a
 | 4 | **ScenarioControls polish** — group buttons by expected verdict with color-tinted clusters, replay button on its own row | ✅ done |
 | 5 | **Replay summary header** — `X/Y passing` headline with colored dot above the replay table | ✅ done |
 | 6 | **Audit log polish** — relative timestamps, color-coded event tags by category, collapsible metadata via native `<details>` | ✅ done |
-| 7 | **Loading + empty states** — spinner in active button, friendlier placeholder copy across panels | ⏳ next |
-| 8 | **Header polish** — team names, "DEMO" tag, status dot for `policy v0 · 5 scenarios` | |
+| 7 | **Loading + empty states** — spinner in clicked button via `loadingId`, shared `EmptyState` helper with unicode glyphs across all panels | ✅ done |
+| 8 | **Header polish** — team names, "DEMO" tag, status dot for `policy v0 · 5 scenarios` | ⏳ next |
 
 Each step lands as a discrete diff for review before moving to the next.
 

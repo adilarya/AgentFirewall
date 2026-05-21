@@ -1,5 +1,6 @@
 import type { DecisionType, ScenarioResult } from "@/lib/types";
 import Card from "./internal/Card";
+import EmptyState from "./internal/EmptyState";
 
 const COLORS: Record<DecisionType, string> = {
   allow: "border-emerald-500 bg-emerald-500/10 text-emerald-200",
@@ -16,7 +17,9 @@ export default function FirewallDecisionPanel({
   return (
     <Card title="Firewall decision" subtitle="Runtime policy enforcement" step={3} accent>
       {!result ? (
-        <p className="text-sm text-slate-500">No decision yet.</p>
+        <EmptyState glyph="◇">
+          The firewall verdict will appear here.
+        </EmptyState>
       ) : (
         <div className="space-y-3 text-sm">
           <div

@@ -2,86 +2,80 @@ import type { FirewallDecision, Purchase, ToolCall } from "./types";
 
 const POLICY_NAME = "support_refund_policy_v0";
 
+function parseDollarAmounts(text: string): number[] {
+  const matches = text.matchAll(/\$(\d+(?:,\d{3})*(?:\.\d+)?)/g);
+  return Array.from(matches).map((m) => parseFloat(m[1].replace(/,/g, "")));
+}
+
 export function evaluatePolicy(
   toolCall: ToolCall,
   purchase: Purchase,
 ): FirewallDecision {
   const body = String(toolCall.args?.body ?? "").toLowerCase();
   const channel = String(toolCall.args?.channel ?? "#support-escalations");
+  const { maxAllowedRefund, purchaseAmount, maxRefundPercent, orderId } = purchase;
 
-  if (body.includes("$500")) {
+  // Rewrite check must come before "full compensation" / "full refund" blocks —
+  // "We guarantee full compensation" is a rewrite, not a hard block.
+  if (body.includes("guarantee") || body.includes("guaranteed")) {
     return {
-      decision: "block",
-      reason:
-        "Refund amount of $500 exceeds policy max of $" +
-        purchase.maxAllowedRefund +
-        " on a $" +
-        purchase.purchaseAmount +
-        " purchase.",
+      decision: "rewrite",
+      reason: `Agent attempted an unauthorized written guarantee. Rewritten to a safe escalation note (policy cap: $${maxAllowedRefund} on a $${purchaseAmount} purchase).`,
       policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
-    };
-  }
-
-  if (body.includes("full compensation")) {
-    return {
-      decision: "block",
-      reason:
-        "Promise of full compensation violates refund cap of $" +
-        purchase.maxAllowedRefund +
-        ".",
-      policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
-    };
-  }
-
-  if (body.includes("full refund")) {
-    return {
-      decision: "block",
-      reason:
-        "Full refund exceeds maximum allowed refund of $" +
-        purchase.maxAllowedRefund +
-        ".",
-      policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
+      maxAllowed: maxAllowedRefund,
+      rewrittenArgs: {
+        channel,
+        body: `Order ${orderId} is requesting compensation beyond the automated policy cap of $${maxAllowedRefund}. Please review manually.`,
+      },
     };
   }
 
   if (body.includes("manager approved")) {
     return {
       decision: "block",
-      reason:
-        "Unverifiable manager approval claim. No out-of-band confirmation available.",
+      reason: `Unverifiable manager approval claim for order ${orderId}. No out-of-band confirmation exists.`,
       policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
+      maxAllowed: maxAllowedRefund,
     };
   }
 
-  if (body.includes("guarantee") || body.includes("guaranteed")) {
+  // Amount-aware block: catches $400, $500, any figure above the cap —
+  // not just hardcoded keywords.
+  const amounts = parseDollarAmounts(body);
+  const violating = amounts.find((a) => a > maxAllowedRefund);
+  if (violating !== undefined) {
     return {
-      decision: "rewrite",
-      reason:
-        "Agent attempted to make an unauthorized written guarantee. Rewriting to a safe escalation note.",
+      decision: "block",
+      reason: `Message references $${violating}, which exceeds the $${maxAllowedRefund} policy cap (${maxRefundPercent}% of $${purchaseAmount} purchase).`,
       policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
-      rewrittenArgs: {
-        channel,
-        body: "Customer AC-1001 is requesting compensation beyond automated policy. Please review manually.",
-      },
+      maxAllowed: maxAllowedRefund,
+    };
+  }
+
+  if (body.includes("full refund")) {
+    return {
+      decision: "block",
+      reason: `Full refund promise exceeds the $${maxAllowedRefund} policy cap on a $${purchaseAmount} purchase.`,
+      policy: POLICY_NAME,
+      maxAllowed: maxAllowedRefund,
+    };
+  }
+
+  if (body.includes("full compensation")) {
+    return {
+      decision: "block",
+      reason: `Full compensation promise exceeds the $${maxAllowedRefund} policy cap on a $${purchaseAmount} purchase.`,
+      policy: POLICY_NAME,
+      maxAllowed: maxAllowedRefund,
     };
   }
 
   if (body.includes("$5 voucher")) {
     return {
       decision: "allow",
-      reason:
-        "Voucher of $5 is within policy cap (" +
-        purchase.maxRefundPercent +
-        "% of $" +
-        purchase.purchaseAmount +
-        ").",
+      reason: `$5 voucher is within the ${maxRefundPercent}% policy cap ($${maxAllowedRefund}) on a $${purchaseAmount} purchase.`,
       policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
+      maxAllowed: maxAllowedRefund,
     };
   }
 
@@ -90,15 +84,14 @@ export function evaluatePolicy(
       decision: "allow",
       reason: "Routing to human reviewer is always permitted.",
       policy: POLICY_NAME,
-      maxAllowed: purchase.maxAllowedRefund,
+      maxAllowed: maxAllowedRefund,
     };
   }
 
   return {
     decision: "escalate",
-    reason:
-      "Tool call did not match any known safe or unsafe pattern. Escalating for human review.",
+    reason: "Tool call did not match any known safe or unsafe pattern. Escalating for human review.",
     policy: POLICY_NAME,
-    maxAllowed: purchase.maxAllowedRefund,
+    maxAllowed: maxAllowedRefund,
   };
 }
